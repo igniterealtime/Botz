@@ -99,10 +99,11 @@ jobs:
           IGNITE_REALTIME_MAVEN_PASSWORD: ${{ secrets.IGNITE_REALTIME_MAVEN_PASSWORD }}
       - name: Push Artifact to Github Release
         uses: actions/upload-release-asset@v1
+        if: ${{ contains(github.ref, 'refs/tags/') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.get-id.outputs.rel_id }}/assets
+          upload_url: https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.get-id.outputs.rel_id }}/assets?name=botz-${{ steps.get-id.outputs.version }}.jar
           asset_path: target/botz-${{ steps.get-id.outputs.version }}.jar
           asset_name: botz-${{ steps.get-id.outputs.version }}.jar
           asset_content_type: application/java-archive

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.igniterealtime.openfire.botz</groupId>
+    <artifactId>botz</artifactId>
+    <version>1.1.0-SNAPSHOT</version>
+
+    <name>Botz</name>
+    <description>The Botz library adds to the already rich and extensible Openfire with the ability to create internal user bots. With the Botz library, programmers may choose to develop a user bot to run as a service bearing myservice@example.com as its JID. To Openfire, the user bot is just like other (human) users.</description>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <organization>
+        <name>Ignite Realtime</name>
+        <url>https://www.igniterealtime.org</url>
+    </organization>
+    <url>https://www.igniterealtime.org/projects/botz/</url>
+
+    <inceptionYear>2007</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/igniterealtime/Botz/issues</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:https://github.com/igniterealtime/Botz.git</connection>
+        <developerConnection>scm:git:git@github.com:igniterealtime/Botz.git</developerConnection>
+        <url>https://github.com/igniterealtime/Botz/tree/master</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Guus der Kinderen</name>
+            <roles>
+                <role>Maintainer</role>
+            </roles>
+            <email>guus.der.kinderen@gmail.com</email>
+            <timezone>+1</timezone>
+            <organization>Ignite Realtime</organization>
+            <organizationUrl>https://www.igniterealtime.org</organizationUrl>
+        </developer>
+        <developer>
+            <name>Aznidin Zainuddin</name>
+            <roles>
+                <role>Original Author (inactive)</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0-M2</version>
+                <executions>
+                    <execution>
+                        <id>enforce-no-snapshots</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.5.0</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <rules>
+                        <requireReleaseDeps>
+                            <message>No Snapshots Allowed!</message>
+                            <onlyWhenRelease>true</onlyWhenRelease>
+                        </requireReleaseDeps>
+                    </rules>
+                    <fail>true</fail>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+
+        <!-- Ensure proper cross-compilation, using a compiler flag that's introduced in Java 9. -->
+        <profile>
+            <id>jdk9+</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.release>8</maven.compiler.release>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>ci</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.0.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <source>1.8</source>
+                            <quiet>true</quiet>
+                            <doclint>none</doclint>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.igniterealtime.openfire</groupId>
+            <artifactId>xmppserver</artifactId>
+            <version>4.2.3</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <distributionManagement>
+        <!-- Repository in which we deploy this project, when desired. -->
+        <repository>
+            <id>igniterealtime</id>
+            <name>Ignite Realtime Repository</name>
+            <url>https://www.igniterealtime.org/archiva/repository/maven/</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <!-- Where we obtain dependencies. -->
+        <repository>
+            <id>igniterealtime</id>
+            <name>Ignite Realtime Repository</name>
+            <url>https://igniterealtime.org/archiva/repository/maven/</url>
+        </repository>
+    </repositories>
+</project>

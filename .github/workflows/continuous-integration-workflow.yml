@@ -55,7 +55,7 @@ jobs:
     name: Publish to Maven
     runs-on: ubuntu-latest
     needs: [build, check_branch]
-    if: ${{github.repository == 'igniterealtime/Botz' && github.event_name == 'push' && needs.check_branch.outputs.is_publishable_branch == 'true'}}
+    if: ${{github.repository == 'igniterealtime/Botz' && github.event_name == 'push' && ( needs.check_branch.outputs.is_publishable_branch == 'true' || contains(github.ref, 'refs/tags/') ) }}
 
     steps:
       - uses: actions/checkout@v2
@@ -63,6 +63,20 @@ jobs:
           # Defend against another commit quickly following the first
           # We want the one that's been tested, rather than the head of main
           ref: ${{ github.event.push.after }}
+      - id: get-id
+        name: Compute needed variables
+        run: |
+          set -x
+          tag=$(echo ${{ github.ref }} | cut -d '/' -f3)
+          echo "::set-output name=tag::$tag"
+          echo "tag is '$tag'"
+          version=$(echo ${{ github.ref }} | cut -d '/' -f3 | cut -c 2-)
+          echo "::set-output name=version::$version"
+          echo "version is '$version'"
+          rel_id=$(curl -sL https://api.github.com/repos/${{github.repository}}/releases | jq -r --arg TAG "$tag" '.[] | select(.tag_name==$TAG) | .id')
+          echo ::set-output name=rel_id::$rel_id
+          echo "rel_id is '$rel_id'"
+
       - name: Cache Maven repository
         uses: actions/cache@v1
         with:
@@ -83,3 +97,13 @@ jobs:
         env:
           IGNITE_REALTIME_MAVEN_USERNAME: ${{ secrets.IGNITE_REALTIME_MAVEN_USERNAME }}
           IGNITE_REALTIME_MAVEN_PASSWORD: ${{ secrets.IGNITE_REALTIME_MAVEN_PASSWORD }}
+      - name: Push Artifact to Github Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.get-id.outputs.rel_id }}/assets
+          asset_path: target/botz-${{ steps.get-id.outputs.version }}.jar
+          asset_name: botz-${{ steps.get-id.outputs.version }}.jar
+          asset_content_type: application/java-archive
+

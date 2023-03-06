@@ -27,6 +27,7 @@ import org.jivesoftware.openfire.auth.UnauthorizedException;
 import org.jivesoftware.openfire.net.VirtualConnection;
 import org.jivesoftware.openfire.session.ClientSession;
 import org.jivesoftware.openfire.session.LocalClientSession;
+import org.jivesoftware.openfire.spi.BasicStreamIDFactory;
 import org.jivesoftware.openfire.spi.ConnectionConfiguration;
 import org.jivesoftware.openfire.user.UserAlreadyExistsException;
 import org.jivesoftware.openfire.user.UserNotFoundException;
@@ -256,7 +257,7 @@ public class BotzConnection extends VirtualConnection {
 	public void login() throws BotzSessionAlreadyExistsException {
 		if (isClosed())
 			throw new BotzSessionAlreadyExistsException();
-		localClientSession = (LocalClientSession)SessionManager.getInstance().getSession(jid);
+        localClientSession = SessionManager.getInstance().createClientSession(this, new BasicStreamIDFactory().createStreamID());
 		localClientSession.setAnonymousAuth();
 		if (packetReceiver != null) {
 			packetReceiver.initialize(this);
@@ -371,7 +372,7 @@ public class BotzConnection extends VirtualConnection {
 			}
 		}
 
-		localClientSession = (LocalClientSession)SessionManager.getInstance().getSession(jid);
+        localClientSession = SessionManager.getInstance().createClientSession(this, new BasicStreamIDFactory().createStreamID());
 		localClientSession.setAuthToken(new AuthToken(jid.getNode()), jid
 				.getResource());
 		if (packetReceiver != null) {

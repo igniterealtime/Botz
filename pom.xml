@@ -6,7 +6,7 @@
 
     <groupId>org.igniterealtime.openfire.botz</groupId>
     <artifactId>botz</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.1-SNAPSHOT</version>
 
     <name>Botz</name>
     <description>The Botz library adds to the already rich and extensible Openfire with the ability to create internal user bots. With the Botz library, programmers may choose to develop a user bot to run as a service bearing myservice@example.com as its JID. To Openfire, the user bot is just like other (human) users.</description>

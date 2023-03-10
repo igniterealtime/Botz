@@ -281,7 +281,7 @@ public class BotzConnection extends VirtualConnection {
 	 */
 	public void login(String username)
 			throws BotzSessionAlreadyExistsException, UserNotFoundException {
-		System.out.println("Firt Login");
+		Log.trace("First Login "+username);
 		login(username, "Botz", true);
 	}
 
@@ -328,10 +328,10 @@ public class BotzConnection extends VirtualConnection {
 			throws BotzSessionAlreadyExistsException, UserNotFoundException {
 		if (isClosed())
 			throw new BotzSessionAlreadyExistsException();
-		System.out.println("before JID");
+		Log.trace("Before JID");
 		 jid = new JID(username.toLowerCase(), XMPPServer.getInstance()
 				.getServerInfo().getHostname(), resource);
-			System.out.println(jid);
+		Log.trace("After JID: " + jid);
 		ClientSession oldSession = XMPPServer.getInstance().getRoutingTable()
 				.getClientRoute(jid);
 
@@ -359,11 +359,12 @@ public class BotzConnection extends VirtualConnection {
 				jid.getNode())) {
 			if (createIfNotExist) {
 				try {
+					Log.trace("Creating User");
 					// Bot doesn't care of whatever password it is.
 					XMPPServer.getInstance().getUserManager().createUser(
 							jid.getNode(), StringUtils.randomString(15), null,
 							null);
-					System.out.println("Creating User");
+					Log.trace("Created User: "+jid);
 				} catch (UserAlreadyExistsException e) {
 					// Ignore
 				}

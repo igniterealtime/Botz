@@ -281,7 +281,7 @@ public class BotzConnection extends VirtualConnection {
 	 */
 	public void login(String username)
 			throws BotzSessionAlreadyExistsException, UserNotFoundException {
-		Log.trace("First Login "+username);
+		Log.trace("First Login {}", username);
 		login(username, "Botz", true);
 	}
 
@@ -331,7 +331,7 @@ public class BotzConnection extends VirtualConnection {
 		Log.trace("Before JID");
 		 jid = new JID(username.toLowerCase(), XMPPServer.getInstance()
 				.getServerInfo().getHostname(), resource);
-		Log.trace("After JID: " + jid);
+		Log.trace("After JID: {}",  jid);
 		ClientSession oldSession = XMPPServer.getInstance().getRoutingTable()
 				.getClientRoute(jid);
 
@@ -364,7 +364,7 @@ public class BotzConnection extends VirtualConnection {
 					XMPPServer.getInstance().getUserManager().createUser(
 							jid.getNode(), StringUtils.randomString(15), null,
 							null);
-					Log.trace("Created User: "+jid);
+					Log.trace("Created User: {}", jid);
 				} catch (UserAlreadyExistsException e) {
 					// Ignore
 				}

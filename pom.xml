@@ -93,6 +93,11 @@
                     <fail>true</fail>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+            </plugin>
         </plugins>
     </build>
 
@@ -176,7 +181,7 @@
         <dependency>
             <groupId>org.igniterealtime.openfire</groupId>
             <artifactId>xmppserver</artifactId>
-            <version>4.2.3</version>
+            <version>4.7.4</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

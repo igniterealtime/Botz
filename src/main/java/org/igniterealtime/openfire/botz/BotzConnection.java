@@ -18,6 +18,7 @@ package org.igniterealtime.openfire.botz;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Optional;
 
 import org.jivesoftware.openfire.SessionManager;
 import org.jivesoftware.openfire.SessionPacketRouter;
@@ -37,6 +38,8 @@ import org.slf4j.LoggerFactory;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.Packet;
 import org.xmpp.packet.StreamError;
+
+import javax.annotation.Nullable;
 
 /**
  * The objective of BotzConnection class is to create a robot/bot application as
@@ -101,10 +104,6 @@ public class BotzConnection extends VirtualConnection {
 	 * Holds the initialization state of the packet receiver.
 	 */
 	private boolean initPacketReceiver;
-	/**
-	 * Holds the session for the bot.
-	 */
-	private LocalClientSession localClientSession;
 
 	private JID jid;
 	/**
@@ -113,7 +112,7 @@ public class BotzConnection extends VirtualConnection {
 	public BotzConnection() {
 	}
 
-	/**
+    /**
 	 * Creates a new instance of BotzConnection with the specified packet
 	 * receiver.
 	 * 
@@ -135,7 +134,10 @@ public class BotzConnection extends VirtualConnection {
 	 * receiver.
 	 */
 	@Override
-	public void closeVirtualConnection() {
+    public void closeVirtualConnection(@Nullable StreamError streamError) {
+        if (streamError != null) {
+            Log.debug("Stream error {}\n{}",streamError.getCondition(),streamError);
+        }
 		if (packetReceiver != null && initPacketReceiver) {
 			packetReceiver.terminate();
 			initPacketReceiver = false;
@@ -175,7 +177,19 @@ public class BotzConnection extends VirtualConnection {
 		packetReceiver.processIncomingRaw(text);
 	}
 
-	/*
+    @Override
+    public Optional<String> getTLSProtocolName() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<String> getCipherSuiteName() {
+        return this.session  != null && this.session .getCipherSuiteName() != null
+            ? Optional.of(this.session.getCipherSuiteName())
+            : Optional.of("unknown");
+    }
+
+    /*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.jivesoftware.openfire.Connection#getAddress()
@@ -220,9 +234,9 @@ public class BotzConnection extends VirtualConnection {
 	 * @return Resource portion of the bot's JID.
 	 */
 	public String getResource() {
-		if (localClientSession == null)
+		if (this.session  == null)
 			return null;
-		return localClientSession.getAddress().getResource();
+		return this.session.getAddress().getResource();
 	}
 
 	/**
@@ -231,9 +245,9 @@ public class BotzConnection extends VirtualConnection {
 	 * @return Node portion of the bot's JID.
 	 */
 	public String getUsername() {
-		if (localClientSession == null)
+		if (this.session == null)
 			return null;
-		return localClientSession.getAddress().getNode();
+		return this.session.getAddress().getNode();
 	}
 
 	/**
@@ -257,8 +271,8 @@ public class BotzConnection extends VirtualConnection {
 	public void login() throws BotzSessionAlreadyExistsException {
 		if (isClosed())
 			throw new BotzSessionAlreadyExistsException();
-        localClientSession = SessionManager.getInstance().createClientSession(this, new BasicStreamIDFactory().createStreamID());
-		localClientSession.setAnonymousAuth();
+        init(SessionManager.getInstance().createClientSession(this, new BasicStreamIDFactory().createStreamID()));
+        ((LocalClientSession) this.session).setAnonymousAuth();
 		if (packetReceiver != null) {
 			packetReceiver.initialize(this);
 			initPacketReceiver = true;
@@ -355,9 +369,10 @@ public class BotzConnection extends VirtualConnection {
 			}
 		}
 
-		if (!XMPPServer.getInstance().getUserManager().isRegisteredUser(
-				jid.getNode())) {
-			if (createIfNotExist) {
+        if (!XMPPServer.getInstance().getUserManager().isRegisteredUser(
+            this.jid, false)) {
+
+            if (createIfNotExist) {
 				try {
 					Log.trace("Creating User");
 					// Bot doesn't care of whatever password it is.
@@ -373,8 +388,8 @@ public class BotzConnection extends VirtualConnection {
 			}
 		}
 
-        localClientSession = SessionManager.getInstance().createClientSession(this, new BasicStreamIDFactory().createStreamID());
-		localClientSession.setAuthToken(new AuthToken(jid.getNode()), jid
+        init(SessionManager.getInstance().createClientSession(this, new BasicStreamIDFactory().createStreamID()));
+        ((LocalClientSession) this.session).setAuthToken(AuthToken.generateUserToken(jid.getNode()), jid
 				.getResource());
 		if (packetReceiver != null) {
 			packetReceiver.initialize(this);
@@ -403,7 +418,7 @@ public class BotzConnection extends VirtualConnection {
 	public void sendPacket(Packet packet) {
 		if (isClosed())
 			throw new IllegalStateException("No valid session");
-		SessionPacketRouter router = new SessionPacketRouter(localClientSession);
+		SessionPacketRouter router = new SessionPacketRouter((LocalClientSession) this.session);
 		router.route(packet);
 	}
 

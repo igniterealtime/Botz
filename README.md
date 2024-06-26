@@ -102,7 +102,7 @@ To use the library in an Openfire plugin, it needs to be defined as a dependency
     <dependency>
         <groupId>org.igniterealtime.openfire.botz</groupId>
         <artifactId>botz</artifactId>
-        <version>1.1.0</version>
+        <version>1.3.0</version>
     </dependency>
 </dependencies>
 

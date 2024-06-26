@@ -179,13 +179,13 @@ public class BotzConnection extends VirtualConnection {
 
     @Override
     public Optional<String> getTLSProtocolName() {
-        return Optional.empty();
+        return this.session != null ? Optional.of(this.session.getTLSProtocolName())
+            : Optional.of("unknown");
     }
 
     @Override
     public Optional<String> getCipherSuiteName() {
-        return this.session  != null && this.session .getCipherSuiteName() != null
-            ? Optional.of(this.session.getCipherSuiteName())
+        return this.session != null ? Optional.of(this.session.getCipherSuiteName())
             : Optional.of("unknown");
     }
 

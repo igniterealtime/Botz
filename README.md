@@ -1,4 +1,4 @@
-[![Botz CI](https://github.com/igniterealtime/Botz/workflows/Botz%20CI/badge.svg)](https://github.com/igniterealtime/Botz/actions?query=workflow%3A%22Botz+CI%22+branch%3Amain)
+[![Botz CI](https://github.com/igniterealtime/Botz/actions/workflows/continuous-integration-workflow.yml/badge.svg)](https://github.com/igniterealtime/Botz/actions/workflows/continuous-integration-workflow.yml)
 
 About
 -----

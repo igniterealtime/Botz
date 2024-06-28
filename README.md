@@ -59,7 +59,6 @@ The following is a working sample that shows how to use Botz classes in a plugin
     <licenseType>Apache 2.0</licenseType>
     <date>2024-06-27</date>
     <minServerVersion>4.8.0</minServerVersion>
-    <minJavaVersion>1.8</minJavaVersion>
 </plugin>
 ```
 
@@ -79,8 +78,8 @@ The following is a working sample that shows how to use Botz classes in a plugin
     <description>Echo bot for Openfire</description>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <openfire.version>4.8.0</openfire.version>
     </properties>
@@ -132,8 +131,8 @@ The following is a working sample that shows how to use Botz classes in a plugin
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>9</source>
-                    <target>9</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
         </plugins>

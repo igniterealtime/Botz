@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: ${{ matrix.java }}
@@ -32,7 +32,7 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
       - name: Upload distribution
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: distribution-java${{ matrix.java }}
           path: target/botz-*.jar
@@ -87,7 +87,7 @@ jobs:
             ${{ runner.os }}-java11-maven-
             ${{ runner.os }}-
       - name: Set up Java for publishing
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v5
         with:
           java-version: 11
           distribution: temurin

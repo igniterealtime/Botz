@@ -15,14 +15,14 @@ jobs:
         java: [ 11, 17 ]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Set up JDK ${{ matrix.java }}
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: ${{ matrix.java }}
       - name: Cache Maven repository
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-java${{ matrix.java }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -32,7 +32,7 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
       - name: Upload distribution
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: distribution-java${{ matrix.java }}
           path: target/botz-*.jar
@@ -59,7 +59,7 @@ jobs:
     if: ${{github.repository == 'igniterealtime/Botz' && github.event_name == 'push' && ( needs.check_branch.outputs.is_publishable_branch == 'true' || contains(github.ref, 'refs/tags/') ) }}
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           # Defend against another commit quickly following the first
           # We want the one that's been tested, rather than the head of main
@@ -79,7 +79,7 @@ jobs:
           echo "rel_id is '$rel_id'"
 
       - name: Cache Maven repository
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-java11-maven-${{ hashFiles('**/pom.xml') }}
